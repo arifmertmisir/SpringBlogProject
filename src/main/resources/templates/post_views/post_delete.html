@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"  >
+<head th:replace="/fragments/head :: head">
+
+<body class="sub_page">
+
+<div class="hero_area">
+    <div class="bg-box">
+        <img th:src="@{/images/nav-bg.jpg}" alt="">
+    </div>
+    <header th:replace="/fragments/header :: header"></header>
+</div>
+
+<section class="post_delete_section layout_padding">
+    <div class="container">
+        <h3>Delete Post</h3>
+
+        <form th:action="@{'/post/{id}/delete' (id=${post.id})}" th:object="${post}" method="post">
+            <div class="form-group">
+                <input id="title" name="title" type="text" class="form-control" placeholder="title" th:value="*{title}" readonly />
+            </div>
+            <div class="form-control"
+                 style="height: auto;" th:utext="*{body}" readonly >
+            </div>
+            <br>
+            <div class="form-group">
+                <button type="submit" class="btn btn-danger">Delete post</button>
+                <a th:href="@{'/post/' + ${post.id}}" class="btn btn-secondary">Cancel</a>
+            </div>
+        </form>
+    </div>
+</section>
+
+<footer th:replace="/fragments/footer :: footer"></footer>
+
+</body>
+</html>

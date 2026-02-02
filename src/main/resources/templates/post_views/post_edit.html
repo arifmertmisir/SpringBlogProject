@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"  >
+<head th:replace="/fragments/head :: head">
+
+<body class="sub_page">
+
+<div class="hero_area">
+    <div class="bg-box">
+        <img th:src="@{/images/nav-bg.jpg}" alt="">
+    </div>
+    <header th:replace="/fragments/header :: header"></header>
+</div>
+
+<section class="post_add_section layout_padding">
+    <div class="container">
+        <h3>Update Post</h3>
+
+        <form th:action="@{'/post/{id}/edit' (id=${post.id})}" th:object="${post}" method="post">
+            <div class="form-group">
+                <input id="account" name="account" type="hidden" class="form-control" th:field="*{account}" />
+                <input id="title" name="title" type="text" class="form-control" placeholder="title" th:field="*{title}" />
+            </div>
+            <div class="form-group">
+                <textarea id="editor" name="body"  class="form-control" placeholder="body" th:field="*{body}"></textarea>
+            </div>
+
+            <div class="form-group">
+                <button type="submit" class="btn btn-primary">
+                    Update post
+                </button>
+            </div>
+        </form>
+    </div>
+</section>
+
+<footer th:replace="/fragments/footer :: footer"></footer>
+
+</body>
+</html>
