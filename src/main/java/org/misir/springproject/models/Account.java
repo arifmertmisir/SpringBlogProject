@@ -1,6 +1,8 @@
 package org.misir.springproject.models;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotEmpty;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -19,9 +21,12 @@ public class Account {
     @Column(name = "ID")
     private Long id;
 
+    @Email(message = "Invalid email!")
+    @NotEmpty(message = "Email missing!")
     @Column(name = "EMAIL")
     private String email;
 
+    @NotEmpty(message = "Password missing!")
     @Column(name = "PASSWORD")
     private String password;
 
