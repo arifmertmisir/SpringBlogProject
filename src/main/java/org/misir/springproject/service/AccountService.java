@@ -4,6 +4,7 @@ import org.misir.springproject.models.Account;
 import org.misir.springproject.repositories.AccountRepository;
 import org.misir.springproject.util.constants.Roles;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
@@ -20,6 +21,9 @@ import java.util.stream.Collectors;
 
 @Service
 public class AccountService implements UserDetailsService {
+    @Value("${my.app.photo-prefix}")
+    private String photoPrefix;
+
     @Autowired
     private AccountRepository accountRepository;
 
@@ -29,6 +33,9 @@ public class AccountService implements UserDetailsService {
     public void save(Account account){
         account.setPassword(passwordEncoder.encode(account.getPassword()));
         if(account.getRole() == null) account.setRole(Roles.USER.getRole());
+        if(account.getPhoto() == null) {
+            account.setPhoto(photoPrefix + "icons8-user-default-64.png");
+        }
         accountRepository.save(account);
     }
 

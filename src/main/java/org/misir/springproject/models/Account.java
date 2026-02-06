@@ -1,12 +1,13 @@
 package org.misir.springproject.models;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.format.annotation.DateTimeFormat;
 
+import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -30,11 +31,27 @@ public class Account {
     @Column(name = "PASSWORD")
     private String password;
 
+    @NotEmpty(message = "First name missing!")
     @Column(name = "FIRST_NAME")
     private String firstName;
 
+    @NotEmpty(message = "Last name missing!")
     @Column(name = "LAST_NAME")
     private String lastName;
+
+    @Column(name = "GENDER")
+    private String gender;
+
+    @Min(value = 18)
+    @Max(value = 99)
+    @Column(name = "AGE")
+    private Integer age;
+
+    @Column(name = "BIRTH_DATE")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    private LocalDate birthDate;
+
+    private String photo;
 
     @Column(name = "ROLE")
     private String role;

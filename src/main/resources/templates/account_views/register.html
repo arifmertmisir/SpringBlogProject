@@ -19,7 +19,7 @@
         <form th:action="@{/register}" th:object="${account}" method="post">
 
             <div class="form-group">
-                <label for="email">Email:</label>
+                <label for="email">Email</label>
                 <input
                         type="text"
                         name="email"
@@ -33,7 +33,7 @@
             </div>
 
             <div class="form-group">
-                <label for="password">Password:</label>
+                <label for="password">Password</label>
                 <input
                         type="password"
                         id="password"
@@ -42,11 +42,11 @@
                         required
                         class="form-control"
                 />
-                <p th:if="${#fields.hasErrors('password')}" th:errors="*{password}" class="alert alert-danger" role="alert">Password Error</p>
+                <p th:if="${#fields.hasErrors('password')}" th:errors="*{firstName}" class="alert alert-danger" role="alert">First name Error</p>
             </div>
 
             <div class="form-group">
-                <label for="firstName">First Name:</label>
+                <label for="firstName">First Name</label>
                 <input
                         type="text"
                         id="firstName"
@@ -55,6 +55,57 @@
                         required
                         class="form-control"
                 />
+                <p th:if="${#fields.hasErrors('firstName')}" th:errors="*{password}" class="alert alert-danger" role="alert">Password Error</p>
+            </div>
+
+            <div class="form-group">
+                <label for="lastName">Last Name</label>
+                <input
+                        type="text"
+                        id="lastName"
+                        th:field="*{lastName}"
+                        placeholder="Enter your last name"
+                        required
+                        class="form-control"
+                />
+                <p th:if="${#fields.hasErrors('lastName')}" th:errors="*{lastName}" class="alert alert-danger" role="alert">Last name Error</p>
+            </div>
+
+            <div class="form-group">
+                <label for="age">Age</label>
+                <input
+                        type="number"
+                        id="age"
+                        th:field="*{age}"
+                        placeholder="Enter your age"
+                        min="18"
+                        max="99"
+                        required
+                        class="form-control"
+                />
+                <p th:if="${#fields.hasErrors('age')}" th:errors="*{age}" class="alert alert-danger" role="alert">Age Error</p>
+            </div>
+
+            <div class="form-group">
+                <label for="birthDate">Birthdate</label>
+                <input
+                        type="date"
+                        id="birthDate"
+                        th:field="*{birthDate}"
+                        placeholder="Enter your Birthdate"
+                        required
+                        class="form-control"
+                />
+                <p th:if="${#fields.hasErrors('birthDate')}" th:errors="*{birthDate}" class="alert alert-danger" role="alert">Birthdate Error</p>
+            </div>
+
+            <div class="form-group">
+                <select id="gender" name="gender" th:field="*{gender}">
+                    <option value="Male">Male</option>
+                    <option value="Female">Female</option>
+                    <option value="Others">Others</option>
+                </select>
+                <p th:if="${#fields.hasErrors('gender')}" th:errors="*{gender}" class="alert alert-danger" role="alert">Gender Error</p>
             </div>
 
             <div class="form-group">
@@ -62,7 +113,6 @@
                     Register
                 </button>
             </div>
-
         </form>
     </div>
 </section>
