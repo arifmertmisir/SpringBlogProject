@@ -1,6 +1,7 @@
 package org.misir.springproject.models;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -17,9 +18,11 @@ public class Post {
     @Column(name = "ID")
     private Long id;
 
+    @NotBlank(message = "Missing Post title!")
     @Column(name = "TITLE")
     private String title;
 
+    @NotBlank(message = "Missing Post body!")
     @Column(name = "BODY", columnDefinition = "TEXT")
     private String body;
 

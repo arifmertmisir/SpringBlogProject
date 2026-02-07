@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -42,6 +43,9 @@ public class SeedData implements CommandLineRunner {
         account.setFirstName("Mert");
         account.setLastName("Misir");
         account.setRole(Roles.ADMIN.getRole());
+        account.setAge(30);
+        account.setBirthDate(LocalDate.parse("1995-05-08"));
+        account.setGender("Male");
 
         Account account2 = new Account();
         account2.setEmail("max.mustermann@testmail.com");
@@ -49,6 +53,9 @@ public class SeedData implements CommandLineRunner {
         account2.setFirstName("Max");
         account2.setLastName("Mustermann");
         account2.setRole(Roles.USER.getRole());
+        account2.setAge(25);
+        account2.setBirthDate(LocalDate.parse("2001-01-01"));
+        account2.setGender("Male");
 
         Account account3 = new Account();
         account3.setEmail("editor@editor.com");
@@ -56,6 +63,9 @@ public class SeedData implements CommandLineRunner {
         account3.setFirstName("Editor");
         account3.setLastName("Editormann");
         account3.setRole(Roles.EDITOR.getRole());
+        account3.setAge(20);
+        account3.setBirthDate(LocalDate.parse("2006-01-01"));
+        account3.setGender("Female");
 
         Account account4 = new Account();
         account4.setEmail("super_editor@editor.com");
@@ -63,6 +73,9 @@ public class SeedData implements CommandLineRunner {
         account4.setFirstName("Super Editor");
         account4.setLastName("Super Editormann");
         account4.setRole(Roles.EDITOR.getRole());
+        account4.setAge(40);
+        account4.setBirthDate(LocalDate.parse("1986-01-01"));
+        account4.setGender("Female");
         Set<Authority> authorities = new HashSet<>();
         authorityService.findById(Privillages.ACCESS_ADMIN_PANEL.getId()).ifPresent(authorities::add);
         authorityService.findById(Privillages.RESET_ANY_USER_PASSWORD.getId()).ifPresent(authorities::add);
