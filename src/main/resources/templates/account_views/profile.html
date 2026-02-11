@@ -16,8 +16,15 @@
         <div class="heading_container">
             <h4>Profile</h4>
             <img th:src="@{${photo}}" class="rounded-circle shadow-sm"
-                 style="width: 80px; height: 80px; object-fit: cover; margin-bottom: 20px;"
+                 style="width: 150px; height: 150px; object-fit: cover; margin-bottom: 20px;"
                  alt="Avatar" />
+            <form method="post" th:action="@{/update_photo}" enctype="multipart/form-data">
+                <div class="form-group">
+                    <input type="file" name="file" class="form-control-file">
+                </div>
+                <button type="submit" class="btn btn-warning">Update photo</button>
+                <p th:text="${error}" th:if="${error ne null}" class="alert alert-danger"></p>
+            </form>
         </div>
         <form th:action="@{/profile}" th:object="${account}" method="post">
             <div class="form-group">

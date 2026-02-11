@@ -9,11 +9,13 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
-public class WebSecurityConfig {
+public class WebSecurityConfig implements WebMvcConfigurer {
 
     private static final String[] WHITE_LIST = {
         "/",
@@ -26,6 +28,7 @@ public class WebSecurityConfig {
         "/css/**",
         "/fonts/**",
         "/images/**",
+        "/uploads/**",
         "/js/**"
     };
 
@@ -64,5 +67,14 @@ public class WebSecurityConfig {
         );
 
         return http.build();
+    }
+
+    @Override
+    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+    // Capture all incoming browser requests starting with "/uploads/**"
+        registry.addResourceHandler("/uploads/**")
+                // Map these requests to the physical "uploads" directory located in the project's root folder
+                // The "file:" prefix tells Spring to look outside the classpath (external storage)
+                .addResourceLocations("file:uploads/");
     }
 }
