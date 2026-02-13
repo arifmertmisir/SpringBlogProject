@@ -60,6 +60,11 @@ public class WebSecurityConfig implements WebMvcConfigurer {
                 .failureUrl("/login?error")
                 .permitAll()
         )
+        .rememberMe(remember -> remember
+                .key("uniqueAndSecretKey")
+                .tokenValiditySeconds(86400)
+                .rememberMeParameter("remember-me")
+        )
         .logout(logout -> logout
                 .logoutUrl("/logout")
                 .logoutSuccessUrl("/")
