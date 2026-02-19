@@ -3,7 +3,9 @@ import jakarta.validation.Valid;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.misir.springproject.models.Account;
 import org.misir.springproject.service.AccountService;
+import org.misir.springproject.service.EmailService;
 import org.misir.springproject.util.constants.AppUtil;
+import org.misir.springproject.util.email.EmailDetails;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -23,7 +25,9 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.security.Principal;
+import java.time.LocalDateTime;
 import java.util.Optional;
+import java.util.UUID;
 
 @Controller
 public class AccountController {
@@ -31,8 +35,17 @@ public class AccountController {
     @Value("${my.app.photo-prefix}")
     private String photoPrefix;
 
+    @Value("${password.token.reset.timeout.minutes}")
+    private Integer password_token_timeout_minutes;
+
+    @Value("${site.domain}")
+    private String siteDomain;
+
     @Autowired
     private AccountService accountService;
+
+    @Autowired
+    private EmailService emailService;
 
     @GetMapping("/register")
     public String showRegisterForm(Model model) {
@@ -143,5 +156,83 @@ public class AccountController {
             redirectAttributes.addFlashAttribute("error", "Upload failed: " + e.getMessage());
             return "redirect:/profile?error";
         }
+    }
+
+    @GetMapping("/forgot-password")
+    public String forgotPassword(Model model) {
+        return "account_views/forgot_password";
+    }
+
+
+    @PostMapping("/reset-password")
+    public String resetPassword(@RequestParam("email") String _email, RedirectAttributes redirectAttributes, Model model) {
+        Optional<Account> optionalAccount = accountService.findByEmail(_email);
+        if(optionalAccount.isEmpty()) {
+            redirectAttributes.addFlashAttribute("error", "No account with email " + _email);
+            return "redirect:/forgot-password";
+        }
+        Account account = accountService.findById(optionalAccount.get().getId())
+                .orElseThrow(() ->
+                new RuntimeException("Account with id " + optionalAccount.get().getId() + " does not exist"));
+        String resetToken = UUID.randomUUID().toString();
+        account.setToken(resetToken);
+        account.setPassword_reset_token_expiry(LocalDateTime.now().plusMinutes(password_token_timeout_minutes));
+        accountService.save(account);
+
+        String resetMessage = "This is the reset password link: " +  siteDomain + "change-password?token=" + resetToken;
+        EmailDetails emailDetails = new EmailDetails(account.getEmail(), "Reset password link", resetMessage);
+        if(!emailService.sendEmail(emailDetails)){
+            redirectAttributes.addFlashAttribute("error", "Error while sending email, contact system administrator");
+            return "redirect:/forgot-password";
+        }
+        redirectAttributes.addFlashAttribute("message", "Password reset mail sent to " + account.getEmail());
+
+        return "redirect:/login";
+    }
+
+    @GetMapping("/change-password")
+    public String changePassword(Model model, @RequestParam("token") String token,  RedirectAttributes redirectAttributes){
+        if(!StringUtils.hasText(token)) {
+            redirectAttributes.addFlashAttribute("error", "No token provided!");
+            return "redirect:/forgot-password";
+        }
+
+        Optional<Account> optionalAccount = accountService.findByToken(token);
+        if(optionalAccount.isEmpty()) {
+            redirectAttributes.addFlashAttribute("error", "Invalid token!");
+            return "redirect:/forgot-password";
+        }
+
+        Account account = optionalAccount.get();
+        if(LocalDateTime.now().isAfter(account.getPassword_reset_token_expiry())){
+            redirectAttributes.addFlashAttribute("error", "Token expired!");
+            return "redirect:/forgot-password";
+        }
+
+        model.addAttribute("account", account);
+        return "account_views/change_password";
+    }
+
+    @PostMapping("/change-password")
+    public String postChangePassword(@ModelAttribute Account account, RedirectAttributes redirectAttributes){
+        Optional<Account> optionalAccount = accountService.findByToken(account.getToken());
+        if(optionalAccount.isEmpty()) {
+            redirectAttributes.addFlashAttribute("error", "Invalid token!");
+            return "redirect:/forgot-password";
+        }
+
+        Account existingAccount = optionalAccount.get();
+        if(LocalDateTime.now().isAfter(existingAccount.getPassword_reset_token_expiry())){
+            redirectAttributes.addFlashAttribute("error", "Token expired!");
+            return "redirect:/forgot-password";
+        }
+
+        existingAccount.setPassword(account.getPassword());
+        existingAccount.setToken(null);
+        existingAccount.setPassword_reset_token_expiry(null);
+        accountService.save(existingAccount);
+
+        redirectAttributes.addFlashAttribute("message", "Password changed successfully!");
+        return "redirect:/login";
     }
 }
